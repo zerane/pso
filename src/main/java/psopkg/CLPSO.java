@@ -42,14 +42,19 @@ public class CLPSO extends WPSO {
         for(int d=0;d<dimensionCount;d++){
             List<Integer> candidate = null;
             double rand = random.nextDouble();
-            if(policyFlag == Topology.Star_nop){
-                candidate = getCandidateStarNop(i);
-                double fitness = Double.MAX_VALUE;
-                for(int j=0;j<candidate.size();j++){
-                    if(pbest[candidate.get(j)].fitnessValue<fitness){
-                        particles[i].exemplar[d]=candidate.get(j);
-                    }
-                }
+//            if(policyFlag == Topology.Star_nop){
+//                candidate = getCandidateStarNop(i);
+//                double fitness = Double.MAX_VALUE;
+//                for(int j=0;j<candidate.size();j++){
+//                    if(pbest[candidate.get(j)].fitnessValue<fitness){
+//                        particles[i].exemplar[d]=candidate.get(j);
+//                    }
+//                }
+//                continue;
+//            }
+            if(i==starCenter){
+                candidate = getCandidateGbest(i);
+                particles[i].exemplar[d]=candidate.get(0);
                 continue;
             }
             if(rand<pc[i]){
@@ -65,6 +70,9 @@ public class CLPSO extends WPSO {
                         break;
                     case Grid:
                         candidate = getCandidateGrid(i);
+                        break;
+                    case Star_nop:
+                        candidate = getCandidateStarNop(i);
                         break;
                     default:
                         candidate = getCandidateOri(i);
@@ -194,6 +202,7 @@ public class CLPSO extends WPSO {
         }else{
             ans.add(pickOne());
             ans.add(pickOne());
+            ans.add(starCenter);
         }
         return ans;
     }
