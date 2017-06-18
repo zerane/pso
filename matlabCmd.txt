@@ -1,0 +1,2 @@
+x=[1:1:301]
+plot(x,FullyConnected,'--',x,Grid,'-',x,Local,'--*',x,NCluster,'--<',x,Star'--.')
