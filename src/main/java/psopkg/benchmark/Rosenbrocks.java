@@ -14,6 +14,7 @@ public class Rosenbrocks extends BenchmarkModel {
         for (int i=0;i<dimensionCount-1;i++){
             ans += 100*(Math.pow(Math.pow(x[i],2)-x[i+1],2)+Math.pow(x[i]-1,2));
         }
+        super.calculate(x);
         return ans;
     }
 

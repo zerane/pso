@@ -21,6 +21,7 @@ public class Star extends TopologyModel {
                 }
             }else{
                 topo.get(i).add(center);
+                topo.get(i).add(i);
             }
         }
     }

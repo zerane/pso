@@ -1,18 +1,20 @@
 package psopkg.benchmark;
 
 /**
- * Created by admin on 2017/6/8.
+ * Created by admin on 2017/6/19.
  */
-public class Sphere extends BenchmarkModel {
-    public Sphere(int dim){
+public class Step extends BenchmarkModel {
+    public Step(int dim) {
         super(dim);
     }
 
     @Override
     public double calculate(double[] x){
         double ans=0;
-        for (int i=0;i<dimensionCount;i++){
-            ans += Math.pow(x[i],2);
+        for(int i=0;i<dimensionCount;i++){
+            double num=0;
+            num = Math.pow(Math.floor(x[i]+0.5),2);
+            ans += num;
         }
         super.calculate(x);
         return ans;

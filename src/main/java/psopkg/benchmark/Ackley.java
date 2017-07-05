@@ -10,17 +10,19 @@ public class Ackley extends BenchmarkModel {
 
     @Override
     public double calculate(double[] x){
+        super.calculate(x);
         double ans=0;
         double sum=0;
         for (int i=0;i<dimensionCount;i++){
-            sum += x[i]*x[i];
+            sum += Math.pow(x[i],2);
         }
-        ans += -20D*Math.exp(-0.2*Math.pow(1/dimensionCount*sum,0.5));
+        ans -= 20D*Math.exp(-0.2*Math.pow(1/dimensionCount*sum,0.5));
         sum=0;
         for(int i=0;i<dimensionCount;i++){
             sum += Math.cos(2*Math.PI*x[i]);
         }
-        ans += -Math.exp(1D/dimensionCount*sum)+20+Math.E;
+        ans -= Math.exp(1D/dimensionCount*sum);
+        ans += 20+Math.E;
         return ans;
     }
 

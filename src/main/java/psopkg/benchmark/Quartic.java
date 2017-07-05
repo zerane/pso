@@ -1,10 +1,12 @@
 package psopkg.benchmark;
 
+import java.util.Random;
+
 /**
- * Created by admin on 2017/6/9.
+ * Created by admin on 2017/6/19.
  */
-public class Griewanks extends BenchmarkModel {
-    public Griewanks(int dim) {
+public class Quartic extends BenchmarkModel {
+    public Quartic(int dim) {
         super(dim);
     }
 
@@ -12,33 +14,28 @@ public class Griewanks extends BenchmarkModel {
     public double calculate(double[] x){
         super.calculate(x);
         double ans=0;
-        double sum=0;
         for(int i=0;i<dimensionCount;i++){
-            sum += x[i]*x[i]/4000;
+            double num=0;
+            num = (i+1)*Math.pow(x[i],4);
+            ans += num;
         }
-        ans += sum;
-        sum=1;
-        for(int i=0;i<dimensionCount;i++){
-            sum *= Math.cos(x[i]/Math.pow(i+1,0.5));
-        }
-        ans += -sum;
-        ans += 1;
+        ans += new Random().nextDouble();
         return ans;
     }
 
     @Override
     public void initBound(){
         for(int i=0;i<dimensionCount;i++){
-            upperBound[i] = 600;
+            upperBound[i] = 1.28;
         }
         for(int i=0;i<dimensionCount;i++){
-            initUpperBound[i] = 200;
+            initUpperBound[i] = 1.28;
         }
         for(int i=0;i<dimensionCount;i++){
-            lowerBound[i] = -600;
+            lowerBound[i] = -1.28;
         }
         for(int i=0;i<dimensionCount;i++){
-            initLowerBound[i] = -600;
+            initLowerBound[i] = -1.28;
         }
     }
 }

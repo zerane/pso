@@ -3,42 +3,42 @@ package psopkg.benchmark;
 /**
  * Created by admin on 2017/6/9.
  */
-public class Griewanks extends BenchmarkModel {
-    public Griewanks(int dim) {
+public class SchwefelP222 extends BenchmarkModel {
+    public SchwefelP222(int dim) {
         super(dim);
     }
 
     @Override
     public double calculate(double[] x){
-        super.calculate(x);
         double ans=0;
         double sum=0;
-        for(int i=0;i<dimensionCount;i++){
-            sum += x[i]*x[i]/4000;
+        for (int i=0;i<dimensionCount;i++){
+            sum += Math.abs(x[i]);
         }
         ans += sum;
         sum=1;
         for(int i=0;i<dimensionCount;i++){
-            sum *= Math.cos(x[i]/Math.pow(i+1,0.5));
+            sum *= Math.abs(x[i]);
         }
-        ans += -sum;
-        ans += 1;
+        ans += sum;
+        super.calculate(x);
         return ans;
     }
 
     @Override
     public void initBound(){
         for(int i=0;i<dimensionCount;i++){
-            upperBound[i] = 600;
+            upperBound[i] = 10;
         }
         for(int i=0;i<dimensionCount;i++){
-            initUpperBound[i] = 200;
+            initUpperBound[i] = 5;
         }
         for(int i=0;i<dimensionCount;i++){
-            lowerBound[i] = -600;
+            lowerBound[i] = -10;
         }
         for(int i=0;i<dimensionCount;i++){
-            initLowerBound[i] = -600;
+            initLowerBound[i] = -10;
         }
     }
+
 }

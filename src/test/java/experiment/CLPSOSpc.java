@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class CLPSOSpc {
     public static int repeatTimes=30;
-    public static int dimensionCount=10;
+    public static int dimensionCount=30;
 
     @Test
     public void testDegree(){
@@ -34,7 +34,22 @@ public class CLPSOSpc {
                 List<TestData> sampleTD = new ArrayList<>();
                 BufferedWriter bw = new BufferedWriter(new FileWriter(psoinbm));
                 String towrite = "";
-                for(int j=0;j<=degreeMax;j+=8){
+
+                {
+                    List<PSO> repeated = new ArrayList<>();
+                    for (int m = 0; m < repeatTimes; m++) {
+                        CLPSO pso = new CLPSO();
+                        pso.degree = 2;
+                        pso.bindBenchmark(bmList.get(i));
+                        pso.run();
+                        repeated.add(pso);
+                    }
+                    //TestData td = ContentFactory.psosToMeanData(repeated, ContentFactory.CATEGORY_DEGREE);
+                    TestData td = ContentFactory.psosToMedianData(repeated, ContentFactory.CATEGORY_DEGREE);
+                    sampleTD.add(td);
+                }
+
+                for(int j=8;j<=degreeMax;j+=8){
                     List<PSO> repeated = new ArrayList<>();
                     for(int m=0;m<repeatTimes;m++) {
                         CLPSO pso = new CLPSO();
@@ -43,10 +58,12 @@ public class CLPSOSpc {
                         pso.run();
                         repeated.add(pso);
                     }
-                    TestData td = ContentFactory.psosToMeanData(repeated,ContentFactory.CATEGORY_DEGREE);
+                    //TestData td = ContentFactory.psosToMeanData(repeated,ContentFactory.CATEGORY_DEGREE);
+                    TestData td = ContentFactory.psosToMedianData(repeated, ContentFactory.CATEGORY_DEGREE);
                     sampleTD.add(td);
-
                 }
+
+
                 for(int m=0;m<sampleTD.size();m++){
                     towrite += sampleTD.get(m).category+",";
                 }
@@ -58,6 +75,7 @@ public class CLPSOSpc {
                     }
                     bw.write(towrite+"\n");
                 }
+                System.out.println(towrite);
 
                 bw.close();
             }
@@ -72,11 +90,12 @@ public class CLPSOSpc {
             List<BenchmarkModel> bmList = new ArrayList<>();
             //bmList = ContentFactory.benchmarkModels(dimensionCount);
             bmList = ContentFactory.benchmarkModelSampling(dimensionCount);
+            //bmList = ContentFactory.benchmarkModelsSupple(dimensionCount);
             List<CLPSO.Topology> topologyList = ContentFactory.clpsoTopologyToTest();
 
             for(int i=0;i<bmList.size();i++){
                 //file
-                File psoinbm = new File("./result/CLPSO/"+bmList.get(i).getClass().getSimpleName()+".csv");
+                File psoinbm = new File("./result/CLPSO/supple/"+bmList.get(i).getClass().getSimpleName()+".csv");
                 List<TestData> sampleTD = new ArrayList<>();
                 BufferedWriter bw = new BufferedWriter(new FileWriter(psoinbm));
                 String towrite = "";
@@ -84,12 +103,14 @@ public class CLPSOSpc {
                     List<PSO> repeated = new ArrayList<>();
                     for(int m=0;m<repeatTimes;m++) {
                         CLPSO pso = new CLPSO();
+                        pso.dimensionCount = dimensionCount;
                         pso.policyFlag = topologyList.get(j);
                         pso.bindBenchmark(bmList.get(i));
                         pso.run();
                         repeated.add(pso);
                     }
-                    TestData td = ContentFactory.psosToMeanData(repeated,ContentFactory.CATEGORY_CLPSOTOPOLOGY);
+                    //TestData td = ContentFactory.psosToMeanData(repeated,ContentFactory.CATEGORY_CLPSOTOPOLOGY);
+                    TestData td = ContentFactory.psosToMedianData(repeated,ContentFactory.CATEGORY_CLPSOTOPOLOGY);
                     sampleTD.add(td);
 
                 }

@@ -18,7 +18,6 @@ public class RotatedAckley extends Ackley {
                 y[i] += x[j]*M[i][j];
             }
         }
-
         return super.calculate(y);
     }
 }

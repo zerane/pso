@@ -1,5 +1,7 @@
 package psopkg.benchmark;
 
+import psopkg.PSO;
+
 import java.io.*;
 
 /**
@@ -12,6 +14,7 @@ public class BenchmarkModel {
     public double[] initLowerBound;
     public int dimensionCount;
     public double[][] M;
+    public PSO pso;
 
     public BenchmarkModel(int dim){
         dimensionCount = dim;
@@ -38,10 +41,8 @@ public class BenchmarkModel {
     }
 
     public double calculate(double[] x){
+        trigger();
         double ans=0;
-        for (int i=0;i<dimensionCount;i++){
-            ans += Math.pow(x[i],2);
-        }
         return ans;
     }
 
@@ -67,5 +68,21 @@ public class BenchmarkModel {
             e.printStackTrace();
         }
 
+    }
+
+    public void trigger(){
+        if(pso==null){
+            return;
+        }
+        pso.FE--;
+        if(pso.FE%100==0){
+            pso.sample.add(pso.getAns());
+        }
+        if(pso.FE%1000==0&&pso.single){
+            System.out.println("\t"+pso.FE+": "+pso.getAns());
+        }
+        if(pso.FE<=0){
+            pso.interrupted = true;
+        }
     }
 }

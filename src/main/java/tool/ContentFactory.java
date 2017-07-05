@@ -20,7 +20,7 @@ public class ContentFactory {
     public static List<BenchmarkModel> benchmarkModels(int dims){
         List<BenchmarkModel> benchmarks = new ArrayList<>();
         benchmarks.add(new Sphere(dims));
-        benchmarks.add(new SchwefelP2(dims));
+        benchmarks.add(new SchwefelP222(dims));
         benchmarks.add(new Rosenbrocks(dims));
 
         benchmarks.add(new Ackley(dims));
@@ -41,13 +41,32 @@ public class ContentFactory {
     public static List<BenchmarkModel> benchmarkModelSampling(int dims){
         List<BenchmarkModel> benchmarks = new ArrayList<>();
         benchmarks.add(new Sphere(dims));
+//        benchmarks.add(new SchwefelP222(dims));
         benchmarks.add(new Rosenbrocks(dims));
-
+//
         benchmarks.add(new Ackley(dims));
         benchmarks.add(new Griewanks(dims));
+////        benchmarks.add(new Weierstrass(dims));
+        benchmarks.add(new Rastrigin(dims));
+//        benchmarks.add(new NoncontinuousRastrigin(dims));
+//        benchmarks.add(new Schwefel(dims));
+//        benchmarks.add(new GeneralizedPenalized(dims));
+
 
         benchmarks.add(new RotatedAckley(dims));
         benchmarks.add(new RotatedGriewanks(dims));
+        return benchmarks;
+    }
+
+    public static List<BenchmarkModel> benchmarkModelsSupple(int dims){
+        List<BenchmarkModel> benchmarks = new ArrayList<>();
+        benchmarks.add(new Sphere(dims));
+        benchmarks.add(new Rosenbrocks(dims));
+        benchmarks.add(new SchwefelP12(dims));
+        benchmarks.add(new SchwefelP221(dims));
+        benchmarks.add(new SchwefelP222(dims));
+        benchmarks.add(new Quartic(dims));
+        benchmarks.add(new Step(dims));
         return benchmarks;
     }
 
@@ -105,6 +124,9 @@ public class ContentFactory {
                         td.category = "";
                     }
                     break;
+                case CATEGORY_CLPSOTOPOLOGY:
+                    td.category = String.valueOf((((CLPSO) psos.get(i)).policyFlag));
+                    break;
                 default:
                     td.category = String.valueOf(category);
                     break;
@@ -153,6 +175,50 @@ public class ContentFactory {
                 count++;
             }
             sample.add(sum/count);
+        }
+        td.data = sample;
+
+        return td;
+    }
+
+    public static TestData psosToMedianData(List<PSO> psos,int category){
+        TestData td = new TestData();
+        switch (category){
+            case CATEGORY_ALG:
+                td.category = psos.get(0).getClass().getSimpleName();
+                break;
+            case CATEGORY_BENCHMARK:
+                td.category = psos.get(0).benchmark.getClass().getSimpleName();
+                break;
+            case CATEGORY_TOPOLOGY:
+                td.category = psos.get(0).topology.getClass().getSimpleName();
+                break;
+            case CATEGORY_DEGREE:
+                if(psos.get(0) instanceof CLPSO){
+                    td.category = String.valueOf((((CLPSO) psos.get(0)).degree));
+                }else{
+                    td.category = "";
+                }
+                break;
+            case CATEGORY_CLPSOTOPOLOGY:
+                td.category = ((CLPSO)psos.get(0)).policyFlag.toString();
+                break;
+            default:
+                break;
+        }
+
+        List<Double> sample = new ArrayList<>();
+        int count = psos.size();
+        for(int i=0;i<psos.get(0).sample.size();i++){
+            double[] record = new double[count];
+            for(int j=0;j<psos.size();j++){
+                if(psos.get(j).sample.size()<=j){
+                    break;
+                }
+                record[j] = psos.get(j).sample.get(i);
+                //sum += psos.get(j).sample.get(i);
+            }
+            sample.add(record[count/2]);
         }
         td.data = sample;
 

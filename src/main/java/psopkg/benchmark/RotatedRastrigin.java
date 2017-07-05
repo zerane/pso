@@ -18,7 +18,6 @@ public class RotatedRastrigin extends Rastrigin {
                 y[i] += x[j]*M[i][j];
             }
         }
-
         return super.calculate(y);
     }
 }

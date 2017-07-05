@@ -7,7 +7,6 @@ public class OLPSO extends WPSO{
     public int[][] OA;
     public int[] stagnated;
     public int G=5;
-    public int FE=200000;
     int M;
     public Particle[] po;
 
@@ -40,13 +39,11 @@ public class OLPSO extends WPSO{
     }
 
     @Override
-    public void updateVelocity(){
-        for (int i=0;i<populationSize;i++){
-            for(int j=0;j<dimensionCount;j++){
-                double rand = random.nextDouble();
-                particles[i].velocity[j] = w*particles[i].velocity[j]
-                        + c1*rand*(po[i].position[j]-particles[i].position[j]);
-            }
+    public void updateVelocity(int i){
+        for(int j=0;j<dimensionCount;j++){
+            double rand = random.nextDouble();
+            particles[i].velocity[j] = w*particles[i].velocity[j]
+                    + c1*rand*(po[i].position[j]-particles[i].position[j]);
         }
     }
 
@@ -76,7 +73,6 @@ public class OLPSO extends WPSO{
             for(int d=0;d<dimensionCount;d++){
                 x[j].position[d] = OA[j][d]==1?pbest[i].position[d]:gbesti.position[d];
             }
-            FE--;
             x[j].fitnessValue = benchmark.calculate(x[j].position);
             if(x[j].fitnessValue<min){
                 min = x[j].fitnessValue;
@@ -105,37 +101,32 @@ public class OLPSO extends WPSO{
             }
             xp.position[d] = fitSum1/count1<fitSum2/count2?pbest[i].position[d]:gbesti.position[d];
         }
-        FE--;
         xp.fitnessValue = benchmark.calculate(xp.position);
         po[i] = xp.fitnessValue<xb.fitnessValue?xp:xb;
     }
 
     @Override
-    public void updateBests(){
-        for(int i=0;i<populationSize;i++){
-            if(pbest[i]==null||particles[i].fitnessValue<pbest[i].fitnessValue){
-                stagnated[i]=0;
-                pbest[i] = particles[i].clone();
-                if(gbest==null||pbest[i].fitnessValue<gbest.fitnessValue){
-                    gbest = pbest[i].clone();
-                }
-            }else{
-                stagnated[i]++;
+    public void updateBests(int i){
+        if(pbest[i]==null||particles[i].fitnessValue<pbest[i].fitnessValue){
+            stagnated[i]=0;
+            pbest[i] = particles[i].clone();
+            if(gbest==null||pbest[i].fitnessValue<gbest.fitnessValue){
+                gbest = pbest[i].clone();
             }
+        }else{
+            stagnated[i]++;
         }
         if(topology!=null){
-            updateTopologyGbest();
+            updateTopologyGbest(i);
         }
     }
 
     @Override
-    public void updateFitness(){
-        for(int i=0;i<populationSize;i++){
-            if(!checkBound(particles[i].position)){
-                particles[i].fitnessValue = Double.MAX_VALUE;
-            }else{
-                particles[i].fitnessValue = benchmark.calculate(particles[i].position);
-            }
+    public void updateFitness(int i){
+        if(skipCal[i]){
+            particles[i].fitnessValue = Double.MAX_VALUE;
+        }else{
+            particles[i].fitnessValue = benchmark.calculate(particles[i].position);
         }
     }
 

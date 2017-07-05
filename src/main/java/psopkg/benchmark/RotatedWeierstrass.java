@@ -18,7 +18,6 @@ public class RotatedWeierstrass extends Weierstrass {
                 y[i] += x[j]*M[i][j];
             }
         }
-
         return super.calculate(y);
     }
 }

@@ -10,6 +10,7 @@ public class GeneralizedPenalized extends BenchmarkModel {
 
     @Override
     public double calculate(double[] x){
+        super.calculate(x);
         double ans=0;
         double sum=0;
         double[] y = new double[dimensionCount];

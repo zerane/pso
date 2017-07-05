@@ -16,6 +16,7 @@ public class Rastrigin extends BenchmarkModel {
             sum += x[i]*x[i]-10*Math.cos(2*Math.PI*x[i])+10;
         }
         ans += sum;
+        super.calculate(x);
         return ans;
     }
 

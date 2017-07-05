@@ -15,7 +15,6 @@ public class NoncontinuousRastrigin extends Rastrigin {
         for(int i=0;i<dimensionCount;i++){
             y[i] = Math.abs(x[i])<0.5?x[i]:Math.round(2*x[i])/2;
         }
-
         return super.calculate(y);
     }
 }

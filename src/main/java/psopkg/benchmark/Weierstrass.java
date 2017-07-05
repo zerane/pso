@@ -26,6 +26,7 @@ public class Weierstrass extends BenchmarkModel {
             sum += Math.pow(a,k)*Math.cos(2*Math.PI*Math.pow(b,k)*0.5);
         }
         ans += -dimensionCount*sum;
+        super.calculate(x);
         return ans;
     }
 

@@ -4,7 +4,7 @@ package psopkg.topology;
  * Created by admin on 2017/6/11.
  */
 public class Local extends TopologyModel{
-    public int localSize=1;
+    public static int localSize=1;
 
     public Local(int dim) {
         super(dim);

@@ -13,14 +13,17 @@ public class CLPSO extends WPSO {
     public Topology policyFlag=Topology.Origin;
     public enum Topology{Origin,Globe,Star,Grid,Star_nop};
     public int degree=2;
-    public int starCenter=0;
+    public int starCenter;
     public List<Integer> candidateTotal;
+    public int clusters = 4;
 
     @Override
     public void init(){
+        starCenter = populationSize-1;
         pc = new double[populationSize];
         for(int i=0;i<populationSize;i++){
             pc[i] = 0.05+0.45*(Math.exp(10*(i)/(populationSize-1))-1)/(Math.exp(10)-1);
+            pc[i] = 1;
         }
         flag = new int[populationSize];
         super.init();
@@ -30,11 +33,11 @@ public class CLPSO extends WPSO {
             }
         }
         c1 = 1.49445;
-        c2 = 1.49445;
         candidateTotal = new ArrayList<>();
         for(int i=0;i<populationSize;i++){
             candidateTotal.add(i);
         }
+        boundPolicy = 2;
     }
 
     @Override
@@ -48,15 +51,19 @@ public class CLPSO extends WPSO {
 //                for(int j=0;j<candidate.size();j++){
 //                    if(pbest[candidate.get(j)].fitnessValue<fitness){
 //                        particles[i].exemplar[d]=candidate.get(j);
+//                        fitness = particles[i].exemplar[d];
 //                    }
 //                }
 //                continue;
 //            }
-            if(i==starCenter){
-                candidate = getCandidateGbest(i);
-                particles[i].exemplar[d]=candidate.get(0);
-                continue;
-            }
+//            if(policyFlag==Topology.Star_nop){
+//                if(i==starCenter){
+//                    candidate = getCandidateGbest(i);
+//                    particles[i].exemplar[d]=candidate.get(0);
+//                    continue;
+//                }
+//            }
+
             if(rand<pc[i]){
                 switch (policyFlag){
                     case Origin:
@@ -81,77 +88,104 @@ public class CLPSO extends WPSO {
                 double fitness = Double.MAX_VALUE;
                 for(int j=0;j<candidate.size();j++){
                     if(pbest[candidate.get(j)].fitnessValue<fitness){
-                        particles[i].exemplar[d]=candidate.get(j);
+                        particles[i].exemplar[d] = candidate.get(j);
+                        fitness = pbest[candidate.get(j)].fitnessValue;
                     }
                 }
+                int a=0;
             }else{
                 particles[i].exemplar[d] = i;
             }
         }
-    }
-
-    @Override
-    public void iterate(){
-        for(int i=0;i<populationSize;i++){
-            if(flag[i]>=m){
-                selectExemplar(i);
-                flag[i] = 0;
+        boolean ownFlag = true;
+        for(int j=0;j<dimensionCount;j++){
+            if(particles[i].exemplar[j] != i){
+                ownFlag = false;
             }
         }
-        super.iterate();
-    }
-
-    @Override
-    public void updateVelocity(){
-        for (int i=0;i<populationSize;i++){
-            for(int j=0;j<dimensionCount;j++){
-                double rand = random.nextDouble();
-                particles[i].velocity[j] = w*particles[i].velocity[j]
-                        + c1*rand*(pbest[particles[i].exemplar[j]].position[j]-particles[i].position[j]);
+        if(ownFlag){
+            int another = i;
+            while (another==i) {
+                another = pickOne();
             }
+            //particles[i].exemplar[Math.abs(random.nextInt()%dimensionCount)] = another;
         }
     }
 
+//    @Override
+//    public void iterate(){
+//        for(int i=0;i<populationSize;i++){
+//            if(flag[i]>=m){
+//                selectExemplar(i);
+//                flag[i] = 0;
+//            }
+//        }
+//        super.iterate();
+//    }
+
     @Override
-    public void updateFitness(){
-        for(int i=0;i<populationSize;i++){
-            if(!checkBound(particles[i].position)){
-                particles[i].fitnessValue = Double.MAX_VALUE;
-            }else{
-                particles[i].fitnessValue = benchmark.calculate(particles[i].position);
-            }
+    public void updateVelocity(int i){
+        if(flag[i]>=m){
+            selectExemplar(i);
+            flag[i] = 0;
+        }
+        for(int j=0;j<dimensionCount;j++){
+            double low = 0D;
+            double high = 1D;
+            double rand = random.nextDouble();
+            rand  = rand*(high-low)+low;
+//            DecimalFormat df = new DecimalFormat("0.0");
+//            rand = Double.parseDouble(df.format(rand));
+            //rand = 1;
+            particles[i].velocity[j] = w*particles[i].velocity[j]
+                    + c1*rand*(pbest[particles[i].exemplar[j]].position[j]-particles[i].position[j]);
         }
     }
 
     @Override
-    public void updateBests(){
-        for(int i=0;i<populationSize;i++){
-            if(pbest[i]==null||particles[i].fitnessValue<pbest[i].fitnessValue){
-                flag[i]=0;
-                pbest[i] = particles[i].clone();
-                if(gbest==null||pbest[i].fitnessValue<gbest.fitnessValue){
-                    gbest = pbest[i].clone();
-                }
-            }else{
-                flag[i]++;
+    public void updateFitness(int i){
+        if(skipCal[i]){
+            //particles[i].fitnessValue = Double.MAX_VALUE;
+        }else{
+            particles[i].fitnessValue = benchmark.calculate(particles[i].position);
+        }
+    }
+
+    @Override
+    public void updateBests(int i){
+        if(skipCal[i]){
+            return;
+        }
+        if(pbest[i]==null||particles[i].fitnessValue<pbest[i].fitnessValue){
+            flag[i]=0;
+            pbest[i] = particles[i].clone();
+            if(gbest==null||pbest[i].fitnessValue<gbest.fitnessValue){
+                gbest = pbest[i].clone();
             }
+        }else{
+            flag[i]++;
         }
         if(topology!=null){
-            updateTopologyGbest();
+            updateTopologyGbest(i);
         }
     }
 
     public List<Integer> getCandidateOri(int i){
         List<Integer> ans = new ArrayList<>();
-        List<Integer> myCandidate = new ArrayList<>(candidateTotal);
+        List<Integer> myCandidate;
+        if (topology==null){
+            myCandidate = new ArrayList<>(candidateTotal);
+        }else{
+            myCandidate = new ArrayList<>(topology.topo.get(i));
+        }
+        //myCandidate.remove(i);
         for(int j=0;j<degree;j++){
-            if(topology==null){
-                int idx = Math.abs(random.nextInt()%myCandidate.size());
-                ans.add(myCandidate.get(idx));
-                myCandidate.remove(idx);
-            }else{
-                ans.add(topology.topo.get(i).get(Math.abs(random.nextInt()%topology.topo.get(i).size())));
+            if(myCandidate.size()==0){
+                System.out.println("00000");
             }
+            int idx = Math.abs(random.nextInt()%myCandidate.size());
+            ans.add(myCandidate.get(idx));
+            myCandidate.remove(idx);
         }
 
         return ans;
@@ -159,19 +193,27 @@ public class CLPSO extends WPSO {
 
     public List<Integer> getCandidateGrid(int i){
         List<Integer> ans = new ArrayList<>();
+        List<Integer> realAns = new ArrayList<>();
 
         int size = (int)Math.sqrt(populationSize);
         ans.add(i+1>=0?((i+1)%populationSize):(i+1+populationSize));
         ans.add(i-1>=0?((i-1)%populationSize):(i-1+populationSize));
         ans.add(i+size>=0?((i+size)%populationSize):(i+size+populationSize));
         ans.add(i-size>=0?((i-size)%populationSize):(i-size+populationSize));
-        return ans;
+        realAns.add(ans.get(pickOne(ans.size())));
+        return realAns;
     }
 
     public List<Integer> getCandidateStar(int i){
         List<Integer> ans = new ArrayList<>();
-        ans.add(pickOne());
-        ans.add(starCenter);
+        List<Integer> realAns = new ArrayList<>();
+        if(i==starCenter){
+            ans.add(pickOne());
+        }else{
+            ans.add(starCenter);
+        }
+
+        realAns.add(ans.get(pickOne(ans.size())));
         return ans;
     }
 
@@ -193,17 +235,21 @@ public class CLPSO extends WPSO {
         return Math.abs(random.nextInt()%populationSize);
     }
 
+    public Integer pickOne(int size){
+        return Math.abs(random.nextInt()%size);
+    }
+
     public List<Integer> getCandidateStarNop(int i){
         List<Integer> ans = new ArrayList<>();
-        if(i==starCenter){
-            for(int j=0;j<populationSize;j++){
-                ans.add(j);
-            }
-        }else{
-            ans.add(pickOne());
-            ans.add(pickOne());
-            ans.add(starCenter);
-        }
-        return ans;
+        List<Integer> realAns = new ArrayList<>();
+
+        int size = (int)Math.sqrt(populationSize);
+        ans.add(i+1>=0?((i+1)%populationSize):(i+1+populationSize));
+        ans.add(i-1>=0?((i-1)%populationSize):(i-1+populationSize));
+//        ans.add(i+size>=0?((i+size)%populationSize):(i+size+populationSize));
+//        ans.add(i-size>=0?((i-size)%populationSize):(i-size+populationSize));
+        realAns.add(ans.get(pickOne(ans.size())));
+
+        return realAns;
     }
 }

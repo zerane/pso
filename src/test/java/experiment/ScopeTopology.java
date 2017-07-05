@@ -1,6 +1,7 @@
 package experiment;
 
 import org.junit.Test;
+import psopkg.CLPSO;
 import psopkg.PSO;
 import psopkg.benchmark.BenchmarkModel;
 import psopkg.topology.TopologyModel;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public class ScopeTopology {
     public static int repeatTimes=30;
-    public static int dimensionCount=10;
+    public static int dimensionCount=30;
 
     @Test
     public void testScopeTopology(){
@@ -28,6 +29,8 @@ public class ScopeTopology {
             //bmList = ContentFactory.benchmarkModels(dimensionCount);
             bmList = ContentFactory.benchmarkModelSampling(dimensionCount);
             List<PSO> psoList = ContentFactory.psos();
+            psoList = new ArrayList<>();
+            psoList.add(new CLPSO());
             List<TopologyModel> topologyList = ContentFactory.topologyModels(PSO.populationSize);
             List<Thread> threads = new ArrayList<>();
 
@@ -49,7 +52,8 @@ public class ScopeTopology {
                             pso.run();
                             repeated.add(pso);
                         }
-                        TestData td = ContentFactory.psosToMeanData(repeated,ContentFactory.CATEGORY_TOPOLOGY);
+                        //TestData td = ContentFactory.psosToMeanData(repeated,ContentFactory.CATEGORY_TOPOLOGY);
+                        TestData td = ContentFactory.psosToMedianData(repeated,ContentFactory.CATEGORY_TOPOLOGY);
                         sampleTD.add(td);
                     }
                     for(int m=0;m<sampleTD.size();m++){
@@ -64,7 +68,7 @@ public class ScopeTopology {
                     for (int k=0;k<sampleTD.get(0).data.size();k++){
                         towrite="";
                         for(int m=0;m<sampleTD.size();m++){
-                            if(sampleTD.get(m).data.size()<k){
+                            if(sampleTD.get(m).data.size()>=k){
                                 towrite += sampleTD.get(m).data.get(k);
                             }
                             towrite += ",";
