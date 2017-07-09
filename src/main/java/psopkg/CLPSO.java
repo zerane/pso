@@ -187,7 +187,6 @@ public class CLPSO extends WPSO {
             ans.add(myCandidate.get(idx));
             myCandidate.remove(idx);
         }
-
         return ans;
     }
 
@@ -200,6 +199,7 @@ public class CLPSO extends WPSO {
         ans.add(i-1>=0?((i-1)%populationSize):(i-1+populationSize));
         ans.add(i+size>=0?((i+size)%populationSize):(i+size+populationSize));
         ans.add(i-size>=0?((i-size)%populationSize):(i-size+populationSize));
+        ans.add(i);
         realAns.add(ans.get(pickOne(ans.size())));
         return realAns;
     }
@@ -211,10 +211,11 @@ public class CLPSO extends WPSO {
             ans.add(pickOne());
         }else{
             ans.add(starCenter);
+            ans.add(i);
         }
 
         realAns.add(ans.get(pickOne(ans.size())));
-        return ans;
+        return realAns;
     }
 
     public List<Integer> getCandidateGbest(int i){
@@ -243,9 +244,10 @@ public class CLPSO extends WPSO {
         List<Integer> ans = new ArrayList<>();
         List<Integer> realAns = new ArrayList<>();
 
-        int size = (int)Math.sqrt(populationSize);
+        //int size = (int)Math.sqrt(populationSize);
         ans.add(i+1>=0?((i+1)%populationSize):(i+1+populationSize));
         ans.add(i-1>=0?((i-1)%populationSize):(i-1+populationSize));
+        ans.add(i);
 //        ans.add(i+size>=0?((i+size)%populationSize):(i+size+populationSize));
 //        ans.add(i-size>=0?((i-size)%populationSize):(i-size+populationSize));
         realAns.add(ans.get(pickOne(ans.size())));

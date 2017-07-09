@@ -1,9 +1,6 @@
 import org.junit.Test;
 import psopkg.*;
-import psopkg.benchmark.BenchmarkModel;
-import psopkg.benchmark.Griewanks;
-import psopkg.benchmark.Rastrigin;
-import psopkg.benchmark.Rosenbrocks;
+import psopkg.benchmark.*;
 import psopkg.topology.TopologyModel;
 import tool.ChartDrawer;
 import tool.ContentFactory;
@@ -77,7 +74,7 @@ public class baseTest {
         PSO pso = new CLPSO();
         if(pso instanceof CLPSO){
             //((CLPSO)pso).policyFlag = CLPSO.Topology.Globe;
-            ((CLPSO)pso).policyFlag = CLPSO.Topology.Origin;
+            ((CLPSO)pso).policyFlag = CLPSO.Topology.Globe;
             ((CLPSO)pso).degree = 2;
             //((CLPSO)pso).bindTopology(new Local(pso.populationSize));
         }
@@ -110,5 +107,25 @@ public class baseTest {
         System.out.println(bm.calculate(x));
         //System.out.println(420.96*Math.sin(Math.pow(Math.abs(420.96),0.5)));
 
+    }
+
+    @Test
+    public void protectedTestSingleRun(){
+        int dim = 30;
+        PSO pso = new CLPSO();
+        if(pso instanceof CLPSO){
+            //((CLPSO)pso).policyFlag = CLPSO.Topology.Globe;
+            ((CLPSO)pso).policyFlag = CLPSO.Topology.Origin;
+            //((CLPSO)pso).degree = 2;
+            //((CLPSO)pso).bindTopology(new Local(pso.populationSize));
+        }
+        if(pso instanceof WPSO){
+//            ((WPSO)pso).fixedWeight = true;
+//            ((WPSO)pso).w = 1.05;
+        }
+
+        pso.dimensionCount = dim;
+        pso.single = true;
+        run(pso,new Rastrigin(dim),null);
     }
 }

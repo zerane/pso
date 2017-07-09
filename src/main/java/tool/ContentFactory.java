@@ -41,20 +41,21 @@ public class ContentFactory {
     public static List<BenchmarkModel> benchmarkModelSampling(int dims){
         List<BenchmarkModel> benchmarks = new ArrayList<>();
         benchmarks.add(new Sphere(dims));
-//        benchmarks.add(new SchwefelP222(dims));
+        benchmarks.add(new SchwefelP222(dims));
         benchmarks.add(new Rosenbrocks(dims));
-//
+
         benchmarks.add(new Ackley(dims));
         benchmarks.add(new Griewanks(dims));
-////        benchmarks.add(new Weierstrass(dims));
+        //benchmarks.add(new Weierstrass(dims));
         benchmarks.add(new Rastrigin(dims));
-//        benchmarks.add(new NoncontinuousRastrigin(dims));
-//        benchmarks.add(new Schwefel(dims));
-//        benchmarks.add(new GeneralizedPenalized(dims));
-
+        benchmarks.add(new NoncontinuousRastrigin(dims));
+        benchmarks.add(new Schwefel(dims));
+        benchmarks.add(new GeneralizedPenalized(dims));
 
         benchmarks.add(new RotatedAckley(dims));
         benchmarks.add(new RotatedGriewanks(dims));
+        benchmarks.add(new RotatedWeierstrass(dims));
+        benchmarks.add(new RotatedRastrigin(dims));
         return benchmarks;
     }
 

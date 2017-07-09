@@ -18,7 +18,7 @@ public class PSO {
     public Particle[] particles;
     public Particle[] pbest;
     public Particle gbest;
-    public int dimensionCount=30;
+    public int dimensionCount=10;
     public static int populationSize=40;
     public Random random;
     public int currentIteration;
