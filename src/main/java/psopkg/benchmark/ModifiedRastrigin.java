@@ -1,10 +1,10 @@
 package psopkg.benchmark;
 
 /**
- * Created by admin on 2017/6/9.
+ * Created by admin on 2017/7/11.
  */
-public class Schwefel extends BenchmarkModel {
-    public Schwefel(int dim) {
+public class ModifiedRastrigin extends BenchmarkModel {
+    public ModifiedRastrigin(int dim) {
         super(dim);
     }
 
@@ -12,13 +12,10 @@ public class Schwefel extends BenchmarkModel {
     public double calculate(double[] x){
         double ans=0;
         double sum=0;
-        ans += 418.9829 * dimensionCount;
-        //ans -= 1.2981255440536188E-4+-2.536892679927405E-6;
         for (int i=0;i<dimensionCount;i++){
-            sum += x[i]*Math.sin(Math.pow(Math.abs(x[i]),0.5));
-            //sum -= 420.96*Math.sin(Math.pow(420.96,0.5));
+            sum += Math.pow(x[i]-5,2)-10*Math.cos(2*Math.PI*x[i])+10;
         }
-        ans -= sum;
+        ans += sum;
         super.calculate(x);
         return ans;
     }
@@ -26,16 +23,16 @@ public class Schwefel extends BenchmarkModel {
     @Override
     public void initBound(){
         for(int i=0;i<dimensionCount;i++){
-            upperBound[i] = 500;
+            upperBound[i] = 5.12;
         }
         for(int i=0;i<dimensionCount;i++){
-            initUpperBound[i] = 500;
+            initUpperBound[i] = 2;
         }
         for(int i=0;i<dimensionCount;i++){
-            lowerBound[i] = -500;
+            lowerBound[i] = -5.12;
         }
         for(int i=0;i<dimensionCount;i++){
-            initLowerBound[i] = -500;
+            initLowerBound[i] = -5.12;
         }
     }
 }

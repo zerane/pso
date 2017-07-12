@@ -12,6 +12,7 @@ class Particle{
         position = new double[dim];
         velocity = new double[dim];
         exemplar = new int[dim];
+        fitnessValue = Double.MAX_VALUE;
     }
     public Particle clone(){
         assert position.length==velocity.length;

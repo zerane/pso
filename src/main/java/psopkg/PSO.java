@@ -32,6 +32,7 @@ public class PSO {
     public boolean single=false;
     public Particle[] topogbest;
     public List<Double> sample;
+    public List<Double> convergeSample;
     public boolean interrupted = false;
     public boolean[] skipCal;
     public int FE=200000;
@@ -57,6 +58,7 @@ public class PSO {
         }
         System.out.println("\tAfter: "+getAns());
         sample.add(getAns());
+        convergeSample.add(getInnerPopulationDistance());
     }
 
     public double getAns(){
@@ -75,6 +77,7 @@ public class PSO {
         pbest = new Particle[populationSize];
         topogbest = new Particle[populationSize];
         sample = new LinkedList<>();
+        convergeSample = new LinkedList<>();
         skipCal = new boolean[populationSize];
         initParticle();
     }
@@ -203,5 +206,23 @@ public class PSO {
     public void bindTopology(TopologyModel tm){
         assert tm==null||tm.populationSize==populationSize;
         topology = tm;
+    }
+
+    public double getInnerPopulationDistance(){
+        double ans=0;
+        for(int i=0;i<populationSize;i++){
+            for(int j=0;j<populationSize;j++){
+                ans += distance(i,j);
+            }
+        }
+        return ans;
+    }
+    public double distance(int i,int j){
+        double ans=0;
+        for(int d=0;d<dimensionCount;d++){
+            ans+=Math.pow(particles[i].position[d]-particles[j].position[d],2);
+        }
+        ans = Math.sqrt(ans);
+        return ans;
     }
 }

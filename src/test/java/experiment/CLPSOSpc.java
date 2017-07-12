@@ -89,7 +89,11 @@ public class CLPSOSpc {
         try {
             List<BenchmarkModel> bmList = new ArrayList<>();
             //bmList = ContentFactory.benchmarkModels(dimensionCount);
-            bmList = ContentFactory.benchmarkModelSampling(dimensionCount);
+            bmList = ContentFactory.benchmarkModelsSupple(dimensionCount);
+            //bmList = new ArrayList<>();
+            //bmList.add(new ForTest(dimensionCount));
+            //bmList.add(new ModifiedCosine(dimensionCount));
+            //bmList.add(new ModifiedUneven(dimensionCount));
             //bmList = ContentFactory.benchmarkModelsSupple(dimensionCount);
             List<CLPSO.Topology> topologyList = ContentFactory.clpsoTopologyToTest();
 
@@ -132,5 +136,59 @@ public class CLPSOSpc {
             e.printStackTrace();
         }
 
+    }
+
+    @Test
+    public void printConverge(){
+        try {
+            List<BenchmarkModel> bmList = new ArrayList<>();
+            //bmList = ContentFactory.benchmarkModels(dimensionCount);
+            bmList = ContentFactory.benchmarkModelSampling(dimensionCount);
+            //bmList = new ArrayList<>();
+            //bmList.add(new ForTest(dimensionCount));
+            //bmList.add(new ModifiedCosine(dimensionCount));
+            //bmList.add(new ModifiedUneven(dimensionCount));
+            //bmList = ContentFactory.benchmarkModelsSupple(dimensionCount);
+            List<CLPSO.Topology> topologyList = ContentFactory.clpsoTopologyToTest();
+
+            for(int i=0;i<bmList.size();i++){
+                //file
+                File psoinbm = new File("./result/CLPSO/converge/"+bmList.get(i).getClass().getSimpleName()+".csv");
+                List<TestData> sampleTD = new ArrayList<>();
+                BufferedWriter bw = new BufferedWriter(new FileWriter(psoinbm));
+                String towrite = "";
+                for(int j=0;j<topologyList.size();j++){
+                    List<PSO> repeated = new ArrayList<>();
+                    for(int m=0;m<repeatTimes;m++) {
+                        CLPSO pso = new CLPSO();
+                        pso.dimensionCount = dimensionCount;
+                        pso.policyFlag = topologyList.get(j);
+                        pso.bindBenchmark(bmList.get(i));
+                        pso.run();
+                        repeated.add(pso);
+                    }
+                    //TestData td = ContentFactory.psosToMeanData(repeated,ContentFactory.CATEGORY_CLPSOTOPOLOGY);
+                    //TestData td = ContentFactory.psosToMedianData(repeated,ContentFactory.CATEGORY_CLPSOTOPOLOGY);
+                    TestData td = ContentFactory.psosToMedianConverge(repeated,ContentFactory.CATEGORY_CLPSOTOPOLOGY);
+                    sampleTD.add(td);
+
+                }
+                for(int m=0;m<sampleTD.size();m++){
+                    towrite += sampleTD.get(m).category+",";
+                }
+                bw.write(towrite+"\n");
+                for (int k=0;k<sampleTD.get(0).data.size();k++){
+                    towrite="";
+                    for(int m=0;m<sampleTD.size();m++){
+                        towrite += sampleTD.get(m).data.get(k)+",";
+                    }
+                    bw.write(towrite+"\n");
+                }
+
+                bw.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

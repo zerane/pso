@@ -11,11 +11,12 @@ public class CLPSO extends WPSO {
     public int[] flag;
     public int m=7;
     public Topology policyFlag=Topology.Origin;
-    public enum Topology{Origin,Globe,Star,Grid,Star_nop};
+    public enum Topology{Origin,Globe,Star,Grid,Local};
     public int degree=2;
     public int starCenter;
     public List<Integer> candidateTotal;
     public int clusters = 4;
+    public boolean mixed = false;
 
     @Override
     public void init(){
@@ -45,7 +46,7 @@ public class CLPSO extends WPSO {
         for(int d=0;d<dimensionCount;d++){
             List<Integer> candidate = null;
             double rand = random.nextDouble();
-//            if(policyFlag == Topology.Star_nop){
+//            if(policyFlag == Topology.Local){
 //                candidate = getCandidateStarNop(i);
 //                double fitness = Double.MAX_VALUE;
 //                for(int j=0;j<candidate.size();j++){
@@ -56,7 +57,7 @@ public class CLPSO extends WPSO {
 //                }
 //                continue;
 //            }
-//            if(policyFlag==Topology.Star_nop){
+//            if(policyFlag==Topology.Local){
 //                if(i==starCenter){
 //                    candidate = getCandidateGbest(i);
 //                    particles[i].exemplar[d]=candidate.get(0);
@@ -78,13 +79,14 @@ public class CLPSO extends WPSO {
                     case Grid:
                         candidate = getCandidateGrid(i);
                         break;
-                    case Star_nop:
+                    case Local:
                         candidate = getCandidateStarNop(i);
                         break;
                     default:
                         candidate = getCandidateOri(i);
                         break;
                 }
+
                 double fitness = Double.MAX_VALUE;
                 for(int j=0;j<candidate.size();j++){
                     if(pbest[candidate.get(j)].fitnessValue<fitness){
@@ -109,6 +111,13 @@ public class CLPSO extends WPSO {
                 another = pickOne();
             }
             //particles[i].exemplar[Math.abs(random.nextInt()%dimensionCount)] = another;
+        }
+        if(mixed){
+            policyFlag = policyFlag==Topology.Origin?Topology.Globe:policyFlag;
+            policyFlag = policyFlag==Topology.Globe?Topology.Star:policyFlag;
+            policyFlag = policyFlag==Topology.Star?Topology.Grid:policyFlag;
+            policyFlag = policyFlag==Topology.Grid?Topology.Local:policyFlag;
+            policyFlag = policyFlag==Topology.Local?Topology.Origin:policyFlag;
         }
     }
 

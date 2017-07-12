@@ -13,8 +13,10 @@ public class BenchmarkModel {
     public double[] initUpperBound;
     public double[] initLowerBound;
     public int dimensionCount;
-    public double[][] M;
+    public static double[][] M=null;
     public PSO pso;
+    public static String filepath;
+    public Integer setLineCount=null;
 
     public BenchmarkModel(int dim){
         dimensionCount = dim;
@@ -50,12 +52,12 @@ public class BenchmarkModel {
         File matFile = new File(filepath);
         try {
             BufferedReader br = new BufferedReader(new FileReader(matFile));
-            M = new double[dimensionCount][dimensionCount];
+            M = new double[setLineCount==null?dimensionCount:setLineCount][dimensionCount];
             String line;
             String[] data;
             int currentLine=0;
             while((line = br.readLine())!=null){
-                data = line.trim().split("  | ");
+                data = line.trim().split("  | |\t");
                 for(int i=0;i<dimensionCount;i++){
                     M[currentLine][i] = Double.parseDouble(data[i]);
                 }
@@ -77,8 +79,9 @@ public class BenchmarkModel {
         pso.FE--;
         if(pso.FE%100==0){
             pso.sample.add(pso.getAns());
+            pso.convergeSample.add(pso.getInnerPopulationDistance());
         }
-        if(pso.FE%1000==0&&pso.single){
+        if(pso.FE%10000==0&&pso.single){
             System.out.println("\t"+pso.FE+": "+pso.getAns());
         }
         if(pso.FE<=0){

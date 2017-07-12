@@ -10,7 +10,12 @@ public class RotatedRastrigin extends Rastrigin {
 
     @Override
     public double calculate(double[] x){
-        extractM("./extdata/rastrigin_M_D"+dimensionCount+".txt");
+        String path = "./extdata/ForTest_M_D"+dimensionCount+".txt";
+        if(M==null||!filepath.equals(path)){
+            extractM(path);
+            filepath = path;
+        }
+
         double[] y = new double[dimensionCount];
 
         for (int i=0;i<dimensionCount;i++){
