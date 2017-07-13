@@ -24,7 +24,7 @@ public class CLPSO extends WPSO {
         pc = new double[populationSize];
         for(int i=0;i<populationSize;i++){
             pc[i] = 0.05+0.45*(Math.exp(10*(i)/(populationSize-1))-1)/(Math.exp(10)-1);
-            pc[i] = 1;
+            //pc[i] = 1;
         }
         flag = new int[populationSize];
         super.init();

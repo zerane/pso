@@ -14,7 +14,7 @@ public class WPSO extends PSO {
         super.init();
         w0=0.9;
         w1=0.4;
-        boundPolicy = 2;
+        boundPolicy = 1;
     }
 
     public void refreshWeight(){

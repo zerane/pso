@@ -113,7 +113,7 @@ public class baseTest {
     @Test
     public void testSingleRun(){
         int dim = 30;
-        PSO pso = new CLPSO();
+        PSO pso = new PSO();
         if(pso instanceof CLPSO){
             //((CLPSO)pso).policyFlag = CLPSO.Topology.Globe;
             //((CLPSO)pso).policyFlag = CLPSO.Topology.Local;
@@ -128,7 +128,7 @@ public class baseTest {
 
         pso.dimensionCount = dim;
         pso.single = true;
-        run(pso,new ModifiedRastrigin2(dim),null);
+        run(pso,new Schwefel(dim),null);
         return;
     }
 }

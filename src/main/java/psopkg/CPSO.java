@@ -4,6 +4,15 @@ package psopkg;
  * Created by admin on 2017/6/8.
  */
 public class CPSO extends WPSO {
+
+    @Override
+    public void init(){
+        super.init();
+        fixedWeight = true;
+        w=0.729844;
+        c1=c2=2.01;
+    }
+
     @Override
     public void updateVelocity(int i){
         for(int j=0;j<dimensionCount;j++){

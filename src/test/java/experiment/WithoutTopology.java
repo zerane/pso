@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class WithoutTopology {
     public static int repeatTimes=30;
-    public static int dimensionCount=10;
+    public static int dimensionCount=30;
 
     @Test
     public void onAllBenchmarks(){
@@ -37,31 +37,31 @@ public class WithoutTopology {
                 table[i+1][0] = psoList.get(i).getClass().getSimpleName();
             }
 
-//            for(int i=0;i<bmList.size();i++){
-//                double[] tempsum = new double[psoList.size()];
-//                double[] min = new double[psoList.size()];
-//                double[] max = new double[psoList.size()];
-//                for(int k=0;k<psoList.size();k++){
-//                    min[k] = Double.MAX_VALUE;
-//                    max[k] = -Double.MAX_VALUE;
-//                }
-//                for(int t=0;t<repeatTimes;t++){
-//                    psoList = ContentFactory.psos();
-//                    for(int j=0;j<psoList.size();j++){
-//                        PSO pso = psoList.get(j);
-//                        pso.bindBenchmark(bmList.get(i));
-//                        pso.run();
-//                        tempsum[j] += pso.getAns();
-//                        min[j] = pso.getAns()<min[j]?pso.getAns():min[j];
-//                        max[j] = pso.getAns()>max[j]?pso.getAns():max[j];
-//                        //table[j][i] = String.valueOf(pso.getAns());
-//                    }
-//                }
-//                for(int j=0;j<psoList.size();j++){
-//                    double mean = tempsum[j]/repeatTimes;
-//                    table[j+1][i+1] = String.valueOf(mean)+"$"+String.valueOf((max[j]-min[j])/2);
-//                }
-//            }
+            for(int i=0;i<bmList.size();i++){
+                double[] tempsum = new double[psoList.size()];
+                double[] min = new double[psoList.size()];
+                double[] max = new double[psoList.size()];
+                for(int k=0;k<psoList.size();k++){
+                    min[k] = Double.MAX_VALUE;
+                    max[k] = -Double.MAX_VALUE;
+                }
+                for(int t=0;t<repeatTimes;t++){
+                    psoList = ContentFactory.psos();
+                    for(int j=0;j<psoList.size();j++){
+                        PSO pso = psoList.get(j);
+                        pso.bindBenchmark(bmList.get(i));
+                        pso.run();
+                        tempsum[j] += pso.getAns();
+                        min[j] = pso.getAns()<min[j]?pso.getAns():min[j];
+                        max[j] = pso.getAns()>max[j]?pso.getAns():max[j];
+                        //table[j][i] = String.valueOf(pso.getAns());
+                    }
+                }
+                for(int j=0;j<psoList.size();j++){
+                    double mean = tempsum[j]/repeatTimes;
+                    table[j+1][i+1] = String.valueOf(mean)+"$"+String.valueOf((max[j]-min[j])/2);
+                }
+            }
 
             for(int i=0;i<=bmList.size();i++){
                 String towrite = table[0][i];

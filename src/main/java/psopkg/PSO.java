@@ -18,7 +18,7 @@ public class PSO {
     public Particle[] particles;
     public Particle[] pbest;
     public Particle gbest;
-    public int dimensionCount=10;
+    public int dimensionCount=30;
     public static int populationSize=40;
     public Random random;
     public int currentIteration;
@@ -27,7 +27,7 @@ public class PSO {
     public double c2=2;
     public BenchmarkModel benchmark=new BenchmarkModel(dimensionCount);
     public TopologyModel topology;
-    public int boundPolicy=2;//boundpolicy 1=restrict 2=skip
+    public int boundPolicy;//boundpolicy 1=restrict 2=skip
     public double[] vmax;
     public boolean single=false;
     public Particle[] topogbest;
@@ -66,6 +66,7 @@ public class PSO {
     }
 
     public void init(){
+        boundPolicy = 1;
         if(vmax==null){
             vmax = new double[dimensionCount];
             for(int i=0;i<dimensionCount;i++){
