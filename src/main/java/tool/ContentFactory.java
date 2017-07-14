@@ -55,7 +55,7 @@ public class ContentFactory {
 //        benchmarks.add(new GeneralizedPenalized(dims));
 
 //        benchmarks.add(new RotatedAckley(dims));
-//        benchmarks.add(new RotatedGriewanks(dims));
+        benchmarks.add(new RotatedGriewanks(dims));
 //        benchmarks.add(new RotatedWeierstrass(dims));
         //benchmarks.add(new RotatedRastrigin(dims));
         return benchmarks;
@@ -76,6 +76,17 @@ public class ContentFactory {
         psos.add(new CPSO());
         psos.add(new CLPSO());
         psos.add(new OLPSO());
+        return psos;
+    }
+
+    public static List<PSO> clpsos(){
+        List<PSO> psos = new ArrayList<>();
+        List<CLPSO.Topology> clpsotopo = ContentFactory.clpsoTopologyToTest();
+        for (CLPSO.Topology topo : clpsotopo) {
+            CLPSO cp = new CLPSO();
+            cp.policyFlag = topo;
+            psos.add(cp);
+        }
         return psos;
     }
 
